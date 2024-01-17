@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { FormContact } from './FormContact/FormContact';
 import { Filter } from './Filter/Filter';
 import { ListContact } from './ListContact/ListContact';
+import { saveToLS, loadFromLS } from './storage';
 
 export class App extends Component {
   state = {
@@ -15,6 +16,19 @@ export class App extends Component {
     ],
     filter: '',
   };
+  componentDidMount() {
+    const contacts = loadFromLS('contacts');
+    if (contacts) {
+      this.setState({ contacts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts !== contacts) {
+      saveToLS('contacts', contacts);
+    }
+  }
 
   handlerFormSubmit = ({ name, phone }) => {
     const searchName = name.toLowerCase();
